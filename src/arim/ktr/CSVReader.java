@@ -1,10 +1,12 @@
 package arim.ktr;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalDouble;
+import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,24 +27,82 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  */
 public class CSVReader {
-	private final static boolean debug = true;
-	private final static String loadCsvFileName1 	= "COM12_log.csv";
-	private final static String saveCsvFileName1 	= "COM12_log_new.csv";
-	private final static String sumCsvFileName1 	= "COM12_log_summery.csv";
+	private static boolean debug = true;
+	private static String loadCsvFileName1;
+	private static String saveCsvFileName1;
+	private static String sumCsvFileName1;
 	
-	private final static String loadCsvFileName2 = "COM13_log.csv";
-	private final static String saveCsvFileName2 = "COM13_log_new.csv";
-	private final static String sumCsvFileName2 	= "COM13_log_summery.csv";
+	private static String loadCsvFileName2;
+	private static String saveCsvFileName2;
+	private static String sumCsvFileName2;
 	
-	private final static String loadCsvFileName3 = "COM14_log.csv";
-	private final static String saveCsvFileName3 = "COM14_log_new.csv";
-	private final static String sumCsvFileName3 	= "COM14_log_summery.csv";
+	private static String loadCsvFileName3;
+	private static String saveCsvFileName3;
+	private static String sumCsvFileName3;
 	
+	private static String COMMA_DELIMITER = ",";
 	
-	
-	private final static String COMMA_DELIMITER = ",";
+	/**
+	 * Load configuration from config.properties file
+	 */
+	private static void loadConfiguration() {
+		Properties prop = new Properties();
+		InputStream input = null;
+		
+		try {
+			// Try to load from file system first
+			input = new FileInputStream("config.properties");
+			prop.load(input);
+			
+			// Load sensor 1 configuration
+			loadCsvFileName1 = prop.getProperty("sensor1.input", "COM12_log.csv");
+			saveCsvFileName1 = prop.getProperty("sensor1.output", "COM12_log_new.csv");
+			sumCsvFileName1 = prop.getProperty("sensor1.summary", "COM12_log_summery.csv");
+			
+			// Load sensor 2 configuration
+			loadCsvFileName2 = prop.getProperty("sensor2.input", "COM13_log.csv");
+			saveCsvFileName2 = prop.getProperty("sensor2.output", "COM13_log_new.csv");
+			sumCsvFileName2 = prop.getProperty("sensor2.summary", "COM13_log_summery.csv");
+			
+			// Load sensor 3 configuration
+			loadCsvFileName3 = prop.getProperty("sensor3.input", "COM14_log.csv");
+			saveCsvFileName3 = prop.getProperty("sensor3.output", "COM14_log_new.csv");
+			sumCsvFileName3 = prop.getProperty("sensor3.summary", "COM14_log_summery.csv");
+			
+			// Load other settings
+			COMMA_DELIMITER = prop.getProperty("csv.delimiter", ",");
+			debug = Boolean.parseBoolean(prop.getProperty("debug", "true"));
+			
+			System.out.println("Configuration loaded successfully from config.properties");
+		} catch (IOException ex) {
+			System.out.println("config.properties not found, using default values");
+			// Use default values (already set above)
+			loadCsvFileName1 = "COM12_log.csv";
+			saveCsvFileName1 = "COM12_log_new.csv";
+			sumCsvFileName1 = "COM12_log_summery.csv";
+			loadCsvFileName2 = "COM13_log.csv";
+			saveCsvFileName2 = "COM13_log_new.csv";
+			sumCsvFileName2 = "COM13_log_summery.csv";
+			loadCsvFileName3 = "COM14_log.csv";
+			saveCsvFileName3 = "COM14_log_new.csv";
+			sumCsvFileName3 = "COM14_log_summery.csv";
+			COMMA_DELIMITER = ",";
+			debug = true;
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 	//
 	public static void main(String[] args) throws ParseException {
+		// Load configuration first
+		loadConfiguration();
+		
 		CSVReader app =  new CSVReader();
 		try {
 			

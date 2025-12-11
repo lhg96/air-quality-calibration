@@ -1,0 +1,23 @@
+# Air Quality Calibration Configuration Template
+# Copy this file to config.properties and modify with your values
+
+# Sensor 1 (COM12)
+sensor1.input=COM12_log.csv
+sensor1.output=COM12_log_new.csv
+sensor1.summary=COM12_log_summery.csv
+
+# Sensor 2 (COM13)
+sensor2.input=COM13_log.csv
+sensor2.output=COM13_log_new.csv
+sensor2.summary=COM13_log_summery.csv
+
+# Sensor 3 (COM14)
+sensor3.input=COM14_log.csv
+sensor3.output=COM14_log_new.csv
+sensor3.summary=COM14_log_summery.csv
+
+# CSV delimiter
+csv.delimiter=,
+
+# Debug mode (true/false)
+debug=true
